@@ -1,10 +1,28 @@
 {
-  "name": "react-data-viewer",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@lanyue/react-object-viewer",
+  "description": "An object viewer component base on React",
+  "version": "0.1.0",
+  "keywords": ["react-object-viewer", "object-viewer", "object-inspector"],
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "type": "module",
+  "github": "https://github.com/mengdu/react-object-viewer",
+  "repository": {
+    "type": "https",
+    "url": "git+https://github.com/mengdu/react-object-viewer"
+  },
+  "bugs": {
+    "url": "https://github.com/mengdu/react-object-viewer/issues"
+  },
+  "homepage": "https://mengdu.github.io/react-object-viewer/index.html",
+  "license": "MIT",
+  "author": "Lanyue <lanyueos@qq.com>",
   "scripts": {
     "dev": "vite playground",
     "build": "tsc && vite build",
+    "build:playground": "vite build playground",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -18,9 +36,10 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.3.4",
     "less": "^4.1.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^5.0.2",
     "vite": "^4.3.9",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "vite-plugin-dts": "^3.1.1"
   }
 }
