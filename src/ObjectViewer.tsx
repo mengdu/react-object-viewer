@@ -158,7 +158,12 @@ function getTypeValueString ({ type, descriptor }: { type: Type, descriptor: Typ
     if (value instanceof RegExp) return value.toString()
     if (value instanceof Set) return `Set(${value.size})`
     if (value instanceof ArrayBuffer) return `ArrayBuffer(${value.byteLength})`
-    return value.constructor.name
+    try {
+      return value.constructor.name
+    } catch (err) {
+      // SecurityError: Failed to read a named property 'constructor' from 'Window': Blocked a frame with origin "xxx" from accessing a cross-origin frame.
+      return `<Blocked>`
+    }
   }
   if (type === 'array') return `Array(${value.length})`
   if (type === 'string') return JSON.stringify(value)
