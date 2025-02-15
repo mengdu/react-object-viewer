@@ -11,7 +11,17 @@ export enum Sort {
 }
 
 type Type = ReturnType<typeof getType>
-
+export type RenderValueFn = (
+  type: Type,
+  descriptor: TypedPropertyDescriptor<any>,
+  o: {
+    level: number
+    getLazyValue: () => any
+    getTypeValueString: typeof getTypeValueString
+    RenderValueInline: typeof RenderValueInline
+    RenderValue: typeof RenderValue
+  }
+) => ReactNode
 interface CtxType {
   showLevel: number
   showItems: number
@@ -19,7 +29,7 @@ interface CtxType {
   showIcon: boolean
   hideNonEnumerability: boolean
   sortKey: Sort
-  renderValue?: (descriptor: TypedPropertyDescriptor<any>) => ReactNode
+  renderValue?: RenderValueFn
 }
 
 const Ctx = createContext<CtxType>({
@@ -269,16 +279,20 @@ function RenderType (props: {
               <span className="type-system">:&nbsp;</span>
             </>
           ) : null}
-          {opts.renderValue ? opts.renderValue(descriptor) : (
-            type === 'array' || type === 'object'
-              ? <RenderValueInline type={type} descriptor={descriptor} />
-              : (
-                // <span className={'type-value type-' + type} onClick={getLazyValue}>
-                //   {getTypeValueString({ type, descriptor })}
-                // </span>
-                <RenderValue type={type} value={getTypeValueString({ type, descriptor })} onClick={getLazyValue} />
+          {opts.renderValue 
+            ? opts.renderValue(type, descriptor, {
+              level: props.level,
+              getTypeValueString: getTypeValueString,
+              getLazyValue: getLazyValue,
+              RenderValueInline: RenderValueInline,
+              RenderValue: RenderValue,
+            }) 
+            : (
+              type === 'array' || type === 'object'
+                ? <RenderValueInline type={type} descriptor={descriptor} />
+                : <RenderValue type={type} value={getTypeValueString({ type, descriptor })} onClick={getLazyValue} />
               )
-          )}
+          }
         </>
       )}
       icon={opts.showIcon && <i className="type-icon"><RenderTypeIcon type={type} descriptor={descriptor}/></i>}
@@ -303,7 +317,7 @@ export function ObjectViewer (props: {
   showLine?: boolean
   hideNonEnumerability?: boolean
   sortKey?: 0 | 1 | 2
-  renderValue?: (descriptor: TypedPropertyDescriptor<any>) => ReactNode
+  renderValue?: RenderValueFn
   header?: JSX.Element
   footer?: JSX.Element
 }) {

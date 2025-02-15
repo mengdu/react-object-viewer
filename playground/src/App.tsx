@@ -82,7 +82,13 @@ function App() {
   data.func.staticFunc = () => true
   data.func.prototype.method = () => 1
   console.log(data)
-
+  const commonProps = {
+    hideNonEnumerability,
+    showLevel,
+    showIcon,
+    showLine,
+    sortKey
+  }
   useEffect(() => {
     if (!json) return
     try {
@@ -126,22 +132,22 @@ function App() {
         </p>
         <textarea className="input" value={json} onChange={e => setJson(e.target.value)}></textarea>
 
-        <ObjectViewer value={jsonObj} hideNonEnumerability={true} showItems={30} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={data} hideNonEnumerability={hideNonEnumerability} showItems={20} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey}/>
-        <ObjectViewer value={"Hello \n World!"} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={count} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={BigInt(1000)} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={null} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={undefined} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={true} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={() => true} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={function Foo() { return 1 }} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={["One", 2, true, null, undefined, Symbol.for('1')]} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={Symbol.for('hello')} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={/[a-zA-Z0-9]/igm} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={new Date()} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={new Set([1, 'string', true, null, undefined])} showLevel={showLevel} showIcon={showIcon} showLine={showLine} sortKey={sortKey} />
-        <ObjectViewer value={window} showLevel={0} sortKey={2} showIcon={showIcon} showLine={showLine}/>
+        <ObjectViewer value={jsonObj} {...commonProps} />
+        <ObjectViewer value={data} {...commonProps} />
+        <ObjectViewer value={"Hello \n World!"} {...commonProps} />
+        <ObjectViewer value={count} {...commonProps} />
+        <ObjectViewer value={BigInt(1000)} {...commonProps} />
+        <ObjectViewer value={null} {...commonProps} />
+        <ObjectViewer value={undefined} {...commonProps} />
+        <ObjectViewer value={true} {...commonProps} />
+        <ObjectViewer value={() => true} {...commonProps} />
+        <ObjectViewer value={function Foo() { return 1 }} {...commonProps} />
+        <ObjectViewer value={["One", 2, true, null, undefined, Symbol.for('1')]} {...commonProps} />
+        <ObjectViewer value={Symbol.for('hello')} {...commonProps} />
+        <ObjectViewer value={/[a-zA-Z0-9]/igm} {...commonProps} />
+        <ObjectViewer value={new Date()} {...commonProps} />
+        <ObjectViewer value={new Set([1, 'string', true, null, undefined])} {...commonProps} />
+        <ObjectViewer value={window} {...commonProps} />
 
         <h3>Tree</h3>
         <Tree showLine>
