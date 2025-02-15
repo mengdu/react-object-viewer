@@ -44,6 +44,15 @@ export function getPrototype(o: any) {
   return Object.prototype.toString.call(o)
 }
 
+export function getConstructorName (v: object) {
+  try {
+    return v.constructor.name
+  } catch (err) {
+    // SecurityError: Failed to read a named property 'constructor' from 'Window': Blocked a frame with origin "xxx" from accessing a cross-origin frame.
+    return `<Blocked>`
+  }
+}
+
 export function clsx(o: Record<string, any> | any[]) {
   if (Array.isArray(o)) {
     return o.filter(e => !!e).join(' ')

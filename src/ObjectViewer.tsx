@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext, createContext, ReactNode, Fragment, useRef } from 'react'
-import { clsx, getIterateDescriptors, getType } from './utils'
+import { clsx, getConstructorName, getIterateDescriptors, getType } from './utils'
 import { IconArray, IconBoolean, IconEllipsis, IconFunction, IconNull, IconNumber, IconObject, IconString, IconSymbol, IconUndefined } from './icon'
 import { Tree, TreeItem } from './Tree'
 
@@ -119,7 +119,7 @@ function RenderValueInline(props: { type: Type, descriptor: TypedPropertyDescrip
       <div className="object-item-label-inline">
         {value.constructor === Object
           ? null
-          : <span className="is-italic">{value.constructor.name}&nbsp;</span>}
+          : <span className="is-italic">{getConstructorName(value)}&nbsp;</span>}
         <span className="type-system is-italic">{'{'}</span>
         <div className="object-inline-items">
           {arr}
@@ -158,12 +158,7 @@ function getTypeValueString ({ type, descriptor }: { type: Type, descriptor: Typ
     if (value instanceof RegExp) return value.toString()
     if (value instanceof Set) return `Set(${value.size})`
     if (value instanceof ArrayBuffer) return `ArrayBuffer(${value.byteLength})`
-    try {
-      return value.constructor.name
-    } catch (err) {
-      // SecurityError: Failed to read a named property 'constructor' from 'Window': Blocked a frame with origin "xxx" from accessing a cross-origin frame.
-      return `<Blocked>`
-    }
+    return getConstructorName(value)
   }
   if (type === 'array') return `Array(${value.length})`
   if (type === 'string') return JSON.stringify(value)
