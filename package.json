@@ -1,12 +1,18 @@
 {
   "name": "@lanyue/react-object-viewer",
   "description": "An object viewer component base on React",
-  "version": "0.1.0",
-  "keywords": ["react-object-viewer", "object-viewer", "object-inspector"],
+  "version": "0.1.1",
+  "keywords": [
+    "react-object-viewer",
+    "object-viewer",
+    "object-inspector"
+  ],
   "main": "dist/index.umd.js",
   "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "github": "https://github.com/mengdu/react-object-viewer",
   "repository": {
