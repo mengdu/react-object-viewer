@@ -28,6 +28,7 @@ function App() {
   const [hideNonEnumerability, setHideNonEnumerability] = useState(false)
   const [showIcon, setShowIcon] = useState(true)
   const [showLine, setShowLine] = useState(true)
+  const [canClickLabelExtend, setCanClickLabelExtend] = useState(false)
   const [sortKey, setSortKey] = useState<0|1|2>(0)
   const [showLevel, setShowLevel] = useState(1)
   const map = new Map()
@@ -87,7 +88,8 @@ function App() {
     showLevel,
     showIcon,
     showLine,
-    sortKey
+    sortKey,
+    canClickLabelExtend
   }
   useEffect(() => {
     if (!json) return
@@ -122,6 +124,10 @@ function App() {
           <label>
             <input type="checkbox" checked={showLine} onChange={() => setShowLine(!showLine)} />
             <span>ShowLine</span>
+          </label>&nbsp;
+          <label>
+            <input type="checkbox" checked={canClickLabelExtend} onChange={() => setCanClickLabelExtend(!canClickLabelExtend)} />
+            <span>ClickLabelExtend</span>
           </label>&nbsp;
           <select value={sortKey} onChange={e => setSortKey(~~e.target.value as typeof sortKey)}>
             <option value={0}>Default</option>

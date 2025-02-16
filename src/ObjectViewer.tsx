@@ -29,6 +29,7 @@ interface CtxType {
   showIcon: boolean
   hideNonEnumerability: boolean
   sortKey: Sort
+  canClickLabelExtend?: boolean
   renderValue?: RenderValueFn
 }
 
@@ -298,6 +299,7 @@ function RenderType (props: {
       icon={opts.showIcon && <i className="type-icon"><RenderTypeIcon type={type} descriptor={descriptor}/></i>}
       expand={expand}
       hideSpece={props.level === 0}
+      canClickLabelExtend={opts.canClickLabelExtend}
     >
       {canExpand && (
         <RenderTypePropertys
@@ -317,6 +319,7 @@ export function ObjectViewer (props: {
   showLine?: boolean
   hideNonEnumerability?: boolean
   sortKey?: 0 | 1 | 2
+  canClickLabelExtend?: boolean
   renderValue?: RenderValueFn
   header?: JSX.Element
   footer?: JSX.Element
@@ -331,6 +334,7 @@ export function ObjectViewer (props: {
         showIcon: !!props.showIcon,
         hideNonEnumerability: !!props.hideNonEnumerability,
         sortKey: props.sortKey === undefined ? Sort.DEFAULT : props.sortKey,
+        canClickLabelExtend: !!props.canClickLabelExtend,
         renderValue: props.renderValue,
       }}>
         <RenderType level={0} descriptor={{ enumerable: true, value: props.value}} />
