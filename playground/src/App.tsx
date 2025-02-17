@@ -4,21 +4,36 @@ import { ObjectViewer, Tree, TreeItem } from '../../src'
 // import { ObjectViewer, Tree, TreeItem } from '../../'
 // import '../../dist/style.css'
 
-class Cat {
-  private name: string
-  constructor (readonly options = {}) {
-    this.name = 'private'
-  }
+class Animal {
+  private _a: number = 111
+  constructor (readonly name: string) {}
+
   say () {
     console.log(this.name)
   }
-  get title () {
-    return this.name
+
+  get a () {
+    return this._a
   }
 
-  set title (v: string) {
-    this.name = v
+  set a (_: number) {}
+}
+
+class Cat extends Animal {
+  private _b: number = 222
+  constructor (readonly options = {}) {
+    super('Cat')
   }
+
+  catSay () {
+    console.log(this.name)
+  }
+
+  get b () {
+    return this._b
+  }
+
+  set b (_: number) {}
 }
 
 function App() {
@@ -28,8 +43,8 @@ function App() {
   const [hideNonEnumerability, setHideNonEnumerability] = useState(false)
   const [showIcon, setShowIcon] = useState(true)
   const [showLine, setShowLine] = useState(true)
-  const [canClickLabelExtend, setCanClickLabelExtend] = useState(false)
-  const [sortKey, setSortKey] = useState<0|1|2>(0)
+  const [canClickLabelExtend, setCanClickLabelExtend] = useState(true)
+  const [sort, setSort] = useState<0|1|2>(0)
   const [showLevel, setShowLevel] = useState(1)
   const map = new Map()
   map.set('a', 1)
@@ -75,7 +90,8 @@ function App() {
     set setter (v: any) {
       console.log(v)
     },
-    html: document.body
+    html: document.body,
+    '[[Prototype]]': 'custom proto'
   })
   // @ts-ignore
   data.loop = data
@@ -88,7 +104,7 @@ function App() {
     showLevel,
     showIcon,
     showLine,
-    sortKey,
+    sort,
     canClickLabelExtend
   }
   useEffect(() => {
@@ -111,7 +127,7 @@ function App() {
       <div className="container">
         <h1>Object Viewer Playground</h1>
         <p>A page for playground of <a href="https://github.com/mengdu/react-object-viewer">react-object-viewer</a></p>
-        <p>
+        <p style={{position: 'sticky', top: '0px', backgroundColor: '#fff', zIndex: 1, padding: '5px'}}>
           <button onClick={() => setCount(count + 1)}>Counter({count})</button>&nbsp;
           <label>
             <input type="checkbox" value={+hideNonEnumerability} onChange={() => setHideNonEnumerability(!hideNonEnumerability)} />
@@ -129,7 +145,7 @@ function App() {
             <input type="checkbox" checked={canClickLabelExtend} onChange={() => setCanClickLabelExtend(!canClickLabelExtend)} />
             <span>ClickLabelExtend</span>
           </label>&nbsp;
-          <select value={sortKey} onChange={e => setSortKey(~~e.target.value as typeof sortKey)}>
+          <select value={sort} onChange={e => setSort(~~e.target.value as typeof sort)}>
             <option value={0}>Default</option>
             <option value={1}>Desc</option>
             <option value={2}>Asc</option>
@@ -154,24 +170,34 @@ function App() {
         <ObjectViewer value={new Date()} {...commonProps} />
         <ObjectViewer value={new Set([1, 'string', true, null, undefined])} {...commonProps} />
         <ObjectViewer value={window} {...commonProps} />
+        <ObjectViewer value={data.cat} {...commonProps}
+          renderTypeIcon={(type, desc, level, DefaultIcon) => {
+            if (level === 0) return null
+            return <DefaultIcon type={type} descriptor={desc}  />
+          }}
+          renderValue={(type, desc, o) => {
+            if (o.level === 0) return <div><strong>Custom Label</strong> {Number(o.canExpand)} {Number(o.expand)}</div>
+            return <o.DefaultRenderValue type={type} descriptor={desc} loadGetter={o.loadGetter} />
+          }}
+        />
 
         <h3>Tree</h3>
         <Tree showLine>
-          <TreeItem title="AAA" icon={'#'} expand>
-            <TreeItem title="A-1"></TreeItem>
-            <TreeItem title="A-2"></TreeItem>
-            <TreeItem title="A-3" expand>
-              <TreeItem title="A-3-1" icon={'A'}></TreeItem>
-              <TreeItem title="A-3-2" icon={'B'}></TreeItem>
-              <TreeItem title="A-3-3" icon={'C'}></TreeItem>
+          <TreeItem label="AAA" icon={'#'} expand>
+            <TreeItem label="A-1"></TreeItem>
+            <TreeItem label="A-2"></TreeItem>
+            <TreeItem label="A-3" expand>
+              <TreeItem label="A-3-1" icon={'A'}></TreeItem>
+              <TreeItem label="A-3-2" icon={'B'}></TreeItem>
+              <TreeItem label="A-3-3" icon={'C'}></TreeItem>
             </TreeItem>
-            <TreeItem title="A-4"></TreeItem>
+            <TreeItem label="A-4"></TreeItem>
           </TreeItem>
-          <TreeItem title="BBB" icon={'&'}></TreeItem>
-          <TreeItem title="CCC" icon={'%'}></TreeItem>
+          <TreeItem label="BBB" icon={'&'}></TreeItem>
+          <TreeItem label="CCC" icon={'%'}></TreeItem>
         </Tree>
         <Tree showLine>
-          <TreeItem title="AAA" icon={'#'} />
+          <TreeItem label="AAA" icon={'#'} />
         </Tree>
       </div>
     </>

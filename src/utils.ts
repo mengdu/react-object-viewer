@@ -4,15 +4,20 @@ export function getIterateDescriptors(o: any) {
   for (const key in descriptors) {
     arr.push({ key, descriptor: descriptors[key] })
   }
+
   if (o instanceof Set) {
     arr.push({
       key: '[[Values]]',
       descriptor: {
         enumerable: true,
-        value: [...o.entries()].reduce<Record<string, any>>((d, e) => {d[e[0]] = e[1]; return d}, {})
+        value: [...o.entries()].reduce<Record<number, any>>((d, e) => {
+          d[e[0] - 1] = e[1]
+          return d
+        }, {})
       },
     })
   }
+
   if (o instanceof Map) {
     arr.push({
       key: '[[Entries]]',
@@ -22,10 +27,18 @@ export function getIterateDescriptors(o: any) {
       }
     })
   }
-  if (o !== Object.prototype) {
+
+  const prototype = Object.getPrototypeOf(o)
+  if (prototype !== null) {
+    const descriptors = Object.getOwnPropertyDescriptors(prototype)
+    for (const key in descriptors) {
+      if (!descriptors[key].enumerable && !descriptors[key].get) continue
+      if (key === '__proto__') continue
+      arr.push({ key, descriptor: descriptors[key] })
+    }
     arr.push({
       key: '[[Prototype]]',
-      descriptor: { enumerable: false, value: Object.getPrototypeOf(o) },
+      descriptor: { enumerable: false, value: prototype },
     })
   }
   return arr
@@ -46,7 +59,7 @@ export function getPrototype(o: any) {
 
 export function getConstructorName (v: object) {
   try {
-    return v.constructor.name
+    return Object.getPrototypeOf(v).constructor.name
   } catch (err) {
     // SecurityError: Failed to read a named property 'constructor' from 'Window': Blocked a frame with origin "xxx" from accessing a cross-origin frame.
     return `<Blocked>`

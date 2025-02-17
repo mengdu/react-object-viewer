@@ -7,20 +7,21 @@ export interface TreeProps extends React.ComponentProps<'div'> {
   showLine?: boolean
 }
 
-export function Tree(props: TreeProps) {
+export function Tree({children, showLine, ...attrs }: TreeProps) {
   return (
-    <div className={clsx(['tree', props.className, props.showLine && 'show-line'])} translate={props.translate}>{props.children}</div>
+    <div {...attrs} className={clsx([attrs.className, 'tree', showLine && 'show-line'])}>{children}</div>
   )
 }
 
 export interface TreeItemProps {
-  title: ReactNode
+  label: ReactNode
   icon?: ReactNode
   expand?: boolean
   hideSpece?: boolean
   children?: ReactNode
   className?: string
   canClickLabelExtend?: boolean
+  attrs?: React.ComponentProps<'div'>
   onExpand?: (expand: boolean) => void
 }
 
@@ -28,7 +29,13 @@ export function TreeItem(props: TreeItemProps) {
   const hasChild = useMemo(() => props.children, [props.children])
   const [expand, setExpand] = useState(!!props.expand)
 
-  const handleExpand = () => {
+  const handleExpand = (check?: boolean) => {
+    if (check) {
+      const select = getSelection()
+      if (select && select.anchorOffset !== select.focusOffset) {
+        return
+      }
+    }
     if (hasChild) {
       setExpand(!expand)
       props.onExpand?.(!expand)
@@ -40,14 +47,18 @@ export function TreeItem(props: TreeItemProps) {
   }, [props.expand])
 
   return (
-    <div className={clsx(['tree-item', props.className])}>
-      <div className="tree-item-label" onClick={() => {props.canClickLabelExtend && handleExpand()}}>
-        {hasChild && <button onClick={e => {e.stopPropagation();handleExpand();}} className={clsx(['tree-item-fold-btn', expand && 'is-expand'])}>
-          <IconArrow/>
-        </button>}
+    <div className={clsx(['tree-item', props.className])} {...props.attrs}>
+      <div className="tree-item-label" onMouseUp={() => {props.canClickLabelExtend && handleExpand(true)}}>
+        {hasChild &&
+          <button
+            className={clsx(['tree-item-fold-btn', expand && 'is-expand'])}
+            onMouseUp={e => {e.stopPropagation()}}
+            onClick={() => {handleExpand();}}>
+            <IconArrow/>
+          </button>}
         {(!hasChild && !props.hideSpece) && <span className="tree-item-space"></span>}
         {props.icon && <i className="tree-item-icon">{props.icon}</i>}
-        {props.title}
+        {props.label}
       </div>
       {hasChild && expand && <div className="tree-item-content">{props.children}</div>}
     </div>
