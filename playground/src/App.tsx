@@ -177,6 +177,14 @@ function App() {
           }}
           renderValue={(type, desc, o) => {
             if (o.level === 0) return <div><strong>Custom Label</strong> {Number(o.canExpand)} {Number(o.expand)}</div>
+            if (type !== 'object' && type !== 'array') {
+              return (
+                <div className={'type-value type-' + type}>
+                  {o.getValueString({type: type, descriptor: desc})}&nbsp;
+                  <button onClick={() => {console.log(desc.value)}}>copy</button>
+                </div>
+              )
+            }
             return <o.DefaultRenderValue type={type} descriptor={desc} loadGetter={o.loadGetter} />
           }}
         />
