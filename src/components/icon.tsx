@@ -95,3 +95,18 @@ export function IconFunction () {
     </svg>
   )
 }
+
+export function IconLoading () {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 50 50">
+      <g stroke="#f2f2f2" strokeWidth="5"  strokeLinecap="round" fill="none">
+        <circle cx="25" cy="25" r="20"></circle>
+        <circle cx="25" cy="25" r="20" stroke="#20a0ff" strokeDasharray="90, 150" strokeDashoffset="0">
+        <animate attributeName="stroke-dasharray" dur="1.5s" values="1,200;90,150;90,150" repeatCount="indefinite"/>
+        <animate attributeName="stroke-dashoffset" dur="1.5s" values="0;-40px;-120px" repeatCount="indefinite"/>
+        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="2s" repeatCount="indefinite"/>
+        </circle>
+      </g>
+    </svg>
+  )
+}

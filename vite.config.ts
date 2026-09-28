@@ -1,25 +1,32 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import dts from 'vite-plugin-dts'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
+import tailwindcss from '@tailwindcss/vite'
+import dts from 'unplugin-dts/vite'
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react(), dts()],
-  build: {
-    lib: {
-      entry: 'src/index.ts',
-      name: 'ReactDataViewer',
-      fileName: (format) => `index.${format}.js`
-    },
-    rollupOptions: {
-      // 确保外部化处理那些你不想打包进库的依赖
-      external: ['react', 'react-dom'],
-      output: {
-        exports: 'named',
-        globals: {
-          react: 'React'
-        }
+// https://vite.dev/config/
+export default defineConfig(({ mode }) => {
+  const isLib = mode === 'lib'
+  return {
+    plugins: [
+      react(),
+      babel({ presets: [reactCompilerPreset()] }),
+      tailwindcss(),
+      isLib && dts({
+        tsconfigPath: './tsconfig.lib.json',
+      }),
+    ],
+    base: './',
+    publicDir: isLib ? false : undefined,
+    build: isLib ? {
+      lib: {
+        entry: 'src/components/index.ts',
+        fileName: 'index',
+        formats: ['es'],
+      },
+      rolldownOptions: {
+        external: id =>['react'].some(e => id === e || id.startsWith(`${e}/`))
       }
-    }
+    } : undefined
   }
 })

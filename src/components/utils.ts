@@ -1,3 +1,4 @@
+
 export function getIterateDescriptors(o: any) {
   const descriptors = Object.getOwnPropertyDescriptors(o)
   const arr = []
@@ -10,8 +11,8 @@ export function getIterateDescriptors(o: any) {
       key: '[[Values]]',
       descriptor: {
         enumerable: true,
-        value: [...o.entries()].reduce<Record<number, any>>((d, e) => {
-          d[e[0] - 1] = e[1]
+        value: [...o.entries()].reduce<Record<number, any>>((d, e, i) => {
+          d[i] = e[1]
           return d
         }, {})
       },

@@ -1,51 +1,109 @@
-# react-object-viewer  
+# react-object-viewer
 
-A flexible and lightweight object viewer component for React.  
+A flexible and lightweight object viewer component for React. It supports nested
+objects, arrays, functions, built-in JavaScript values, non-enumerable properties,
+and custom node rendering.
 
-> Inspired by [Runkit](https://runkit.com).  
+Inspired by [RunKit](https://runkit.com).
+
+[Live demo](https://mengdu.github.io/react-object-viewer/index.html)
+
+![react-object-viewer preview](./preview.png)
+
+## Installation
 
 ```sh
 npm install @lanyue/react-object-viewer
 ```
 
-```js
-import { ObjectViewer } from '@lanyue/react-object-viewer'
-import '@lanyue/react-object-viewer/dist/style.css'
+## Usage
 
-function App() {
+Import the component and its stylesheet:
+
+```tsx
+import { ObjectViewer } from '@lanyue/react-object-viewer'
+import '@lanyue/react-object-viewer/dist/index.css'
+
+const data = {
+  name: 'react-object-viewer',
+  values: [1, true, null, 'hello'],
+  metadata: { language: 'TypeScript' },
+}
+
+export default function App() {
   return (
-    <ObjectViewer value={window} />
+    <ObjectViewer
+      value={data}
+      expandLevel={1}
+      showIndentLine
+      showIcon
+    />
   )
 }
 ```
 
-**Preview**
-
-![preview](./preview.png)
-
 ## Props
 
-**ObjectViewer** component props:
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` | `any` | Required | The value to inspect. |
+| `name` | `string` | - | A label displayed before the root value. |
+| `className` | `string` | - | A class name applied to the root element. |
+| `expandLevel` | `number` | `0` | Number of levels expanded initially. The root node is level `0`. |
+| `showIndentLine` | `boolean` | `false` | Shows guide lines for nested values. |
+| `showIcon` | `boolean` | `false` | Shows an icon for each property type. |
+| `defaultShowItems` | `number` | `20` | Number of child properties shown per batch. |
+| `showInlineMax` | `number` | `5` | Maximum number of array items or object properties shown in the collapsed inline preview. |
+| `showNonenumerable` | `boolean` | `false` | Includes non-enumerable properties such as `[[Prototype]]`. |
+| `canClickLabelExpand` | `boolean` | `false` | Allows clicking a value label to expand or collapse it. |
+| `sort` | `Sort` | `Sort.DEFAULT` | Property order: `DEFAULT` (`0`), `DESC` (`1`), or `ASC` (`2`). |
+| `nodeRenderer` | `(key, type, descriptor, level) => ReactNode` | - | Replaces the default renderer for each node label. |
 
-- **value**: `any` The value to be view.  
-- **showLine**?: `boolean` - Show alignment line. Defaults to `false`.  
-- **showLevel**?: `number` - Defines how many levels should be unfolded initially. Defaults to `1`.  
-- **showItems**?: `number` - Specifies the number of items to render. Defaults to `20`.  
-- **showInlineMax**?: `number` - Maximum number of items for inline rendering before switching to block format. Defaults to `50`.  
-- **showIcon**?: `boolean` - Show type icon. Defaults to `false`.  
-- **hideNonEnumerability**?: `boolean` - Hide non-enumerable properties. Defaults to `false`.  
-- **sort**?: `number` - Sorting method for items:  
-  - `0` (default) - No sorting  
-  - `1` - Descending order  
-  - `2` - Ascending order  
-- **canClickLabelExtend**?: `boolean` - Allow clicking on the label to expand. Defaults to `false`.  
-- **header**?: `ReactNode` - Custom header component.  
-- **footer**?: `ReactNode` - Custom footer component.  
-- **attrs**?: `React.ComponentProps<'div'>` - Additional attributes applied to the root `<div>` container.  
-- **renderValue**?: `RenderValueFn` - Custom function to render values.  
-- **renderTypeIcon**?: `(type: Type, descriptor: TypedPropertyDescriptor<any>, level: number, DefaultIcon: typeof RenderTypeIcon) => ReactNode`  
-  - Custom function to render type icons.  
-  - `DefaultIcon` refers to the built-in type icon renderer.  
+## Custom node rendering
+
+Use `nodeRenderer` to customize a label. `ObjectViewLabel` is exported so a
+custom renderer can preserve the built-in label and add controls around it.
+
+```tsx
+import {
+  ObjectViewer,
+  ObjectViewLabel,
+  type ObjectViewerProps,
+} from '@lanyue/react-object-viewer'
+
+const nodeRenderer: NonNullable<ObjectViewerProps['nodeRenderer']> = (
+  key,
+  type,
+  descriptor,
+  level,
+) => (
+  <>
+    <ObjectViewLabel
+      keyName={key}
+      type={type}
+      descriptor={descriptor}
+    />
+    {level > 0 && (
+      <button
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation()
+          navigator.clipboard.writeText(String(descriptor.value))
+        }}
+      >
+        Copy
+      </button>
+    )}
+  </>
+)
+
+export default function App() {
+  return <ObjectViewer value={{ answer: 42 }} nodeRenderer={nodeRenderer} />
+}
+```
+
+The package also exports `Sort`, `Type`, `ContextState`, `useOptions`, and the
+built-in icons under the `icons` namespace.
 
 ## License
 
