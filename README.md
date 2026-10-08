@@ -57,7 +57,7 @@ export default function App() {
 | `showNonenumerable` | `boolean` | `false` | Includes non-enumerable properties such as `[[Prototype]]`. |
 | `canClickLabelExpand` | `boolean` | `false` | Allows clicking a value label to expand or collapse it. |
 | `sort` | `Sort` | `Sort.DEFAULT` | Property order: `DEFAULT` (`0`), `DESC` (`1`), or `ASC` (`2`). |
-| `nodeRenderer` | `(key, type, descriptor, level) => ReactNode` | - | Replaces the default renderer for each node label. |
+| `nodeRenderer` | `(name, key, type, descriptor, level) => ReactNode` | - | Replaces the default renderer for each node label. |
 
 ## Custom node rendering
 
@@ -72,6 +72,7 @@ import {
 } from '@lanyue/react-object-viewer'
 
 const nodeRenderer: NonNullable<ObjectViewerProps['nodeRenderer']> = (
+  name,
   key,
   type,
   descriptor,
@@ -79,6 +80,7 @@ const nodeRenderer: NonNullable<ObjectViewerProps['nodeRenderer']> = (
 ) => (
   <>
     <ObjectViewLabel
+      name={name}
       keyName={key}
       type={type}
       descriptor={descriptor}
