@@ -178,11 +178,11 @@ export function Demo() {
         <ObjectViewer value={new Set([1, 'string', true, null, undefined])} {...commonProps} />
         <ObjectViewer value={window} {...commonProps} />
         <ObjectViewer value={jsonObj} {...commonProps}
-          nodeRenderer={(key, type, descriptor) => {
+          nodeRenderer={(name, key, type, descriptor) => {
             // console.log(key, type, descriptor)
             return (
               <>
-                <ObjectViewLabel keyName={key} type={type} descriptor={descriptor} />
+                <ObjectViewLabel name={name} keyName={key} type={type} descriptor={descriptor} />
                 <button className="ml-1.5 border rounded-sm text-sm px-0.5 cursor-pointer text-gray-400 hover:text-gray-500"
                   onClick={(e) => {
                     e.stopPropagation()

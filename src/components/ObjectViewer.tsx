@@ -21,6 +21,7 @@ export interface ContextState {
   canClickLabelExpand: boolean
   sort: Sort
   nodeRenderer?: (
+    name: string | undefined,
     key: string | undefined,
     type: Type,
     descriptor: TypedPropertyDescriptor<any>,
@@ -165,7 +166,7 @@ function ObjectViewerItem(props: ObjectViewerItemProps) {
         >
           {
             state.nodeRenderer
-              ? state.nodeRenderer(props.keyName, valueType, descriptor, props.level)
+              ? state.nodeRenderer(props.name, props.keyName, valueType, descriptor, props.level)
               : (
                 <ObjectViewLabel
                   name={props.name}
