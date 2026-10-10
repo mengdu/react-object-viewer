@@ -25,7 +25,8 @@ export interface ContextState {
     key: string | undefined,
     type: Type,
     descriptor: TypedPropertyDescriptor<any>,
-    level: number
+    level: number,
+    expand: boolean
   ) => ReactNode
 }
 
@@ -166,7 +167,7 @@ function ObjectViewerItem(props: ObjectViewerItemProps) {
         >
           {
             state.nodeRenderer
-              ? state.nodeRenderer(props.name, props.keyName, valueType, descriptor, props.level)
+              ? state.nodeRenderer(props.name, props.keyName, valueType, descriptor, props.level, expand)
               : (
                 <ObjectViewLabel
                   name={props.name}

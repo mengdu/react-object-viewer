@@ -3,12 +3,8 @@
   font-size: 13px;
   padding: 5px 7px;
 
-  & + & {
-    margin-top: 15px;
-  }
-
   .object-viewer-item {
-    --line-color: var(--tree-line-color, #ddd);
+    --line-color: var(--tree-line-color, rgba(0,0,0,0.2));
 
     .object-viewer-content {
       display: flex;
@@ -100,6 +96,10 @@
         }
       }
     }
+
+    &[data-level="0"] > .object-viewer-content .object-viewer-label {
+      font-style: italic;
+    }
   }
 
   .more-button {
@@ -141,14 +141,12 @@
   }
 
   .syntax-name {
-    font-style: italic;
     margin-right: 5px;
   }
 
   .syntax-punctuation,
   .syntax-meta {
     color: inherit;
-    font-style: italic;
   }
 
   .type-icon {

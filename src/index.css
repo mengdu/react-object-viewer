@@ -46,6 +46,10 @@
 }
 
 .object-viewer {
-  border: solid 1px #e2e1e1;
+  border: solid 1px #e7e8ef;
   border-radius: 4px;
+
+  & + & {
+    margin-top: 10px;
+  }
 }
