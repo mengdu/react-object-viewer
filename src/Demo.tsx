@@ -162,7 +162,14 @@ export function Demo() {
         ></textarea>
 
         <ObjectViewer name="Hello" value={jsonObj} {...commonProps} />
-        <ObjectViewer name="Data" value={data} {...commonProps} />
+        <ObjectViewer name="Data" value={data} {...commonProps}
+          onExpand={(expand, info) => {
+            console.log('onExpand', expand, info)
+          }}
+          onLoadedMore={(level, key) => {
+            console.log('onLoadedMore', level, key)
+          }}
+        />
         <ObjectViewer value={"Hello \n World!"} {...commonProps} />
         <ObjectViewer value={count} {...commonProps} />
         <ObjectViewer value={BigInt(1000)} {...commonProps} />

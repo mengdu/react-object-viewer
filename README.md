@@ -58,6 +58,8 @@ export default function App() {
 | `canClickLabelExpand` | `boolean` | `false` | Allows clicking a value label to expand or collapse it. |
 | `sort` | `Sort` | `Sort.DEFAULT` | Property order: `DEFAULT` (`0`), `DESC` (`1`), or `ASC` (`2`). |
 | `nodeRenderer` | `(name, key, type, descriptor, level) => ReactNode` | - | Replaces the default renderer for each node label. |
+| `onExpand` | `(expand, info) => void` | - | Expand/Collapse event |
+| `onLoadedMore` | `(level, key) => void` | - | Load more event |
 
 ## Custom node rendering
 

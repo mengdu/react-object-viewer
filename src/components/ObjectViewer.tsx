@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, createContext, type ReactNode, Fragment, useMemo } from 'react'
+import { useEffect, useState, useContext, createContext, type ReactNode, Fragment, useMemo, type CSSProperties } from 'react'
 import { IconArray, IconArrow, IconBoolean, IconEllipsis, IconFunction, IconNull, IconNumber, IconObject, IconString, IconSymbol, IconUndefined } from './icon'
 import { clsx, getConstructorName, getIterateDescriptors, getType } from './utils'
 
@@ -28,6 +28,12 @@ export interface ContextState {
     level: number,
     expand: boolean
   ) => ReactNode
+  onExpand?: (expand: boolean, info: {
+    level: number
+    key: string | undefined
+    type: Type
+  }) => void
+  onLoadedMore?: (level: number, key: string | undefined) => void
 }
 
 const Context = createContext<ContextState>({
@@ -49,11 +55,12 @@ export interface ObjectViewerProps extends Partial<ContextState> {
   name?: string
   value: any
   className?: string
+  style?: CSSProperties
 }
 
 export function ObjectViewer(props: ObjectViewerProps) {
   return (
-    <div className={clsx(['object-viewer', props.className])}>
+    <div className={clsx(['object-viewer', props.className])} style={props.style}>
       <Context.Provider
         value={{
           expandLevel: props.expandLevel ?? 0,
@@ -65,6 +72,8 @@ export function ObjectViewer(props: ObjectViewerProps) {
           canClickLabelExpand: props.canClickLabelExpand ?? false,
           sort: props.sort ?? Sort.DEFAULT,
           nodeRenderer: props.nodeRenderer,
+          onExpand: props.onExpand,
+          onLoadedMore: props.onLoadedMore,
         }}>
         <ObjectViewerItem
           name={props.name}
@@ -143,16 +152,35 @@ function ObjectViewerItem(props: ObjectViewerItemProps) {
 
   useEffect(() => {
     setExpand(props.level < state.expandLevel)
+    if (props.level < state.expandLevel) {
+      state.onExpand?.(true, {
+        level: props.level,
+        key: props.keyName,
+        type: valueType
+      })
+    }
   }, [props.level, state.expandLevel])
 
   return (
-    <div className={clsx(['object-viewer-item', state.showIndentLine && ['object', 'array', 'function'].includes(valueType) && 'indent-line'])} data-level={props.level}>
+    <div className={clsx([
+      'object-viewer-item',
+      state.showIndentLine && ['object', 'array', 'function'].includes(valueType) && 'indent-line',
+      expand && 'expanded'
+    ])}
+      data-level={props.level}>
       <div className="object-viewer-content">
         {hasChild && (
           <button
-            className={clsx(['object-viewer-fold-button', expand && 'expanded'])}
+            className={clsx(['object-viewer-fold-button'])}
             type="button"
-            onClick={() => setExpand(!expand)}
+            onClick={() => {
+              setExpand(!expand)
+              state.onExpand?.(!expand, {
+                level: props.level,
+                key: props.keyName,
+                type: valueType
+              })
+            }}
           >
             <IconArrow/>
           </button>
@@ -162,7 +190,13 @@ function ObjectViewerItem(props: ObjectViewerItemProps) {
           onClick={e => {
             if (e.button !== 0) return
             if (!state.canClickLabelExpand) return
+            if (!hasChild) return
             setExpand(!expand)
+            state.onExpand?.(!expand, {
+              level: props.level,
+              key: props.keyName,
+              type: valueType
+            })
           }}
         >
           {
@@ -195,7 +229,10 @@ function ObjectViewerItem(props: ObjectViewerItemProps) {
               <button className="more-button"
                 title="load more"
                 type="button"
-                onClick={() => setShowMaxItems(prev => prev + state.defaultShowItems)}>
+                onClick={() => {
+                  setShowMaxItems(prev => prev + state.defaultShowItems)
+                  state.onLoadedMore?.(props.level, props.keyName)
+                }}>
                 <IconEllipsis />
               </button>
             </div>

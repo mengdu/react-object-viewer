@@ -58,10 +58,6 @@
       .icon-arrow {
         fill: #9a9a9a;
       }
-
-      &.expanded {
-        transform: rotate(90deg);
-      }
     }
 
     &.indent-line {
@@ -95,6 +91,10 @@
           left: 7px;
         }
       }
+    }
+
+    &.expanded > .object-viewer-content .object-viewer-fold-button {
+      transform: rotate(90deg);
     }
 
     &[data-level="0"] > .object-viewer-content .object-viewer-label {
