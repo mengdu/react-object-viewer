@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, createContext, type ReactNode, Fragment, useMemo, type CSSProperties } from 'react'
+import { useEffect, useState, useContext, createContext, type ReactNode, Fragment, useMemo, type CSSProperties, type Ref } from 'react'
 import { IconArray, IconArrow, IconBoolean, IconEllipsis, IconFunction, IconNull, IconNumber, IconObject, IconString, IconSymbol, IconUndefined } from './icon'
 import { clsx, getConstructorName, getIterateDescriptors, getType } from './utils'
 
@@ -56,11 +56,12 @@ export interface ObjectViewerProps extends Partial<ContextState> {
   value: any
   className?: string
   style?: CSSProperties
+  ref?: Ref<HTMLDivElement>
 }
 
-export function ObjectViewer(props: ObjectViewerProps) {
+export function ObjectViewer({ ref, ...props }: ObjectViewerProps) {
   return (
-    <div className={clsx(['object-viewer', props.className])} style={props.style}>
+    <div ref={ref} className={clsx(['object-viewer', props.className])} style={props.style}>
       <Context.Provider
         value={{
           expandLevel: props.expandLevel ?? 0,
