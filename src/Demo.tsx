@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ObjectViewer, ObjectViewLabel } from './components'
+import { ObjectViewer, ObjectViewLabel, TypeIcon } from './components'
 
 class Animal {
   private _a: number = 111
@@ -185,8 +185,18 @@ export function Demo() {
         <ObjectViewer value={new Set([1, 'string', true, null, undefined])} {...commonProps} />
         <ObjectViewer value={window} {...commonProps} />
         <ObjectViewer value={jsonObj} {...commonProps}
-          nodeRenderer={(name, key, type, descriptor) => {
+          nodeRenderer={(name, key, type, descriptor, level, expand) => {
             // console.log(key, type, descriptor)
+            if (level > 0 && expand) {
+              return (
+                <>
+                  {showIcon && <TypeIcon type={type} />}
+                  <span className={`type-property' ${!descriptor.enumerable ? 'is-non-enumerable' : ''}`}>{key}</span>
+                  <span className="syntax-punctuation">:&nbsp;</span>
+                  {type === 'array' && `Array(${descriptor.value.length})`}
+                </>
+              )
+            }
             return (
               <>
                 <ObjectViewLabel name={name} keyName={key} type={type} descriptor={descriptor} />

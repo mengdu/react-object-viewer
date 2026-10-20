@@ -192,6 +192,11 @@ function ObjectViewerItem(props: ObjectViewerItemProps) {
             if (e.button !== 0) return
             if (!state.canClickLabelExpand) return
             if (!hasChild) return
+            const sel = document.getSelection()
+            if (sel && !sel.isCollapsed) {
+              return
+            }
+
             setExpand(!expand)
             state.onExpand?.(!expand, {
               level: props.level,
@@ -209,6 +214,7 @@ function ObjectViewerItem(props: ObjectViewerItemProps) {
                   keyName={props.keyName}
                   type={valueType}
                   descriptor={descriptor}
+                  expend={props.level > 0 && expand}
                 />
               )
           }
@@ -249,48 +255,46 @@ export function ObjectViewLabel(props: {
   keyName?: string
   type: Type
   descriptor: TypedPropertyDescriptor<any>
+  expend?: boolean
 }) {
   const state = useOptions()
-  const icon = state.showIcon ? getTypeIcon(props.type) : null
   const property = props.keyName ? (
     <>
-      {icon && <span className="type-icon">{icon}</span>}
       <span className={clsx(['type-property', !props.descriptor.enumerable && 'is-non-enumerable'])}>{props.keyName}</span>
       <span className="syntax-punctuation">:&nbsp;</span>
     </>
   ) : null
 
-  if (props.type === 'array') {
-    return (
-      <>
-        {property}
-        <InlineArray name={props.name} type={props.type} descriptor={props.descriptor} />
-      </>
-    )
-  }
-
-  if (props.type === 'object'
-    && !(props.descriptor.value instanceof Date)
-    && !(props.descriptor.value instanceof RegExp)
-    && !(props.descriptor.value instanceof Set)
-    && !(props.descriptor.value instanceof ArrayBuffer)
-  ) {
-    return (
-      <>
-        {property}
-        <InlineObject name={props.name} type={props.type} descriptor={props.descriptor} />
-      </>
-    )
-  }
-
   return (
     <>
+      {state.showIcon && <TypeIcon type={props.type} />}
       {property}
-      <span className={'type-value type-' + props.type}>
-        {getValueString(props.type, props.descriptor)}
-      </span>
+      <InlineValue
+        name={props.name}
+        type={props.type}
+        descriptor={props.descriptor}
+        expend={!!props.expend}
+      />
     </>
   )
+}
+
+export function TypeIcon(props: {
+  type: Type
+}) {
+  const m: Record<Type, ReactNode> = {
+    string: <IconString />,
+    number: <IconNumber />,
+    bigint: <IconNumber />,
+    boolean: <IconBoolean />,
+    symbol: <IconSymbol />,
+    undefined: <IconUndefined />,
+    object: <IconObject />,
+    array: <IconArray />,
+    function: <IconFunction />,
+    null: <IconNull />
+  }
+  return <span className="type-icon">{m[props.type]}</span>
 }
 
 function InlineArray(props: { name?: string, type: Type, descriptor: TypedPropertyDescriptor<any> }) {
@@ -374,6 +378,40 @@ function InlineObject(props: { name?: string, type: Type, descriptor: TypedPrope
   )
 }
 
+export function InlineValue(props: {
+  name?: string
+  type: Type
+  descriptor: TypedPropertyDescriptor<any>
+  expend: boolean
+}) {
+  if (props.type === 'array') {
+    if (props.expend) return <span>Array({props.descriptor.value.length})</span>
+    return (
+      <InlineArray name={props.name} type={props.type} descriptor={props.descriptor} />
+    )
+  }
+
+  if (props.type === 'object'
+    && !(props.descriptor.value instanceof Date)
+    && !(props.descriptor.value instanceof RegExp)
+    && !(props.descriptor.value instanceof Set)
+    && !(props.descriptor.value instanceof ArrayBuffer)
+  ) {
+    if (props.expend) {
+      return null
+    }
+    return (
+      <InlineObject name={props.name} type={props.type} descriptor={props.descriptor} />
+    )
+  }
+
+  return (
+    <span className={'type-value type-' + props.type}>
+      {getValueString(props.type, props.descriptor)}
+    </span>
+  )
+}
+
 function getValueString (type: Type, descriptor: TypedPropertyDescriptor<any>): string {
   const value = descriptor.value
   if (type === 'object') {
@@ -397,17 +435,4 @@ function getValueString (type: Type, descriptor: TypedPropertyDescriptor<any>): 
   if (type === 'symbol') return value.toString()
   if (type === 'function') return `${value}`
   return String(value)
-}
-
-function getTypeIcon(type: Type) {
-  if (type === 'object') return <IconObject />
-  if (type === 'array') return <IconArray />
-  if (type === 'string') return <IconString />
-  if (type === 'number' || type === 'bigint') return <IconNumber />
-  if (type === 'boolean') return <IconBoolean />
-  if (type === 'null') return <IconNull />
-  if (type === 'undefined') return <IconUndefined />
-  if (type === 'symbol') return <IconSymbol />
-  if (type === 'function') return <IconFunction />
-  return null
 }
