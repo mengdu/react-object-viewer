@@ -199,7 +199,7 @@ export function Demo() {
             }
             return (
               <>
-                <ObjectViewLabel name={name} keyName={key} type={type} descriptor={descriptor} />
+                <ObjectViewLabel showIcon={level > 0 && showIcon} name={name} keyName={key} type={type} descriptor={descriptor} />
                 <button className="ml-1.5 border rounded-sm text-sm px-0.5 cursor-pointer text-gray-400 hover:text-gray-500"
                   onClick={(e) => {
                     e.stopPropagation()

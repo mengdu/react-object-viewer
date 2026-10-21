@@ -215,6 +215,7 @@ function ObjectViewerItem(props: ObjectViewerItemProps) {
                   type={valueType}
                   descriptor={descriptor}
                   expend={props.level > 0 && expand}
+                  showIcon={props.level > 0 && state.showIcon}
                 />
               )
           }
@@ -256,8 +257,8 @@ export function ObjectViewLabel(props: {
   type: Type
   descriptor: TypedPropertyDescriptor<any>
   expend?: boolean
+  showIcon?: boolean
 }) {
-  const state = useOptions()
   const property = props.keyName ? (
     <>
       <span className={clsx(['type-property', !props.descriptor.enumerable && 'is-non-enumerable'])}>{props.keyName}</span>
@@ -267,7 +268,7 @@ export function ObjectViewLabel(props: {
 
   return (
     <>
-      {state.showIcon && <TypeIcon type={props.type} />}
+      {props.showIcon && <TypeIcon type={props.type} />}
       {property}
       <InlineValue
         name={props.name}
