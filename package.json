@@ -1,7 +1,7 @@
 {
   "name": "@lanyue/react-object-viewer",
   "description": "A flexible and lightweight object viewer component for React.",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "keywords": [
     "react-object-viewer",
     "object-viewer",
